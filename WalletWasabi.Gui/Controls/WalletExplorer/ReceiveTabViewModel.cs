@@ -80,7 +80,7 @@ namespace WalletWasabi.Gui.Controls.WalletExplorer
 						return;
 					}
 
-					await address.TryCopyToClipboardAsync();
+					await address.TryCopyToClipboardAsync(nameof(address.Address));
 				});
 
 			var isCoinListItemSelected = this.WhenAnyValue(x => x.SelectedAddress).Select(coin => coin is { });
@@ -92,11 +92,15 @@ namespace WalletWasabi.Gui.Controls.WalletExplorer
 					return;
 				}
 
-				await SelectedAddress.TryCopyToClipboardAsync();
+				await SelectedAddress.TryCopyToClipboardAsync(nameof(SelectedAddress.Address));
 			},
 			isCoinListItemSelected);
 
-			CopyLabel = ReactiveCommand.CreateFromTask(async () => await Application.Current.Clipboard.SetTextAsync(SelectedAddress.Label ?? string.Empty), isCoinListItemSelected);
+			CopyLabel = ReactiveCommand.CreateFromTask(async () =>
+			{
+				await SelectedAddress.TryCopyToClipboardAsync(nameof(SelectedAddress.Label));
+				//Application.Current.Clipboard.SetTextAsync(SelectedAddress.Label ?? string.Empty);
+			}, isCoinListItemSelected);
 
 			ToggleQrCode = ReactiveCommand.Create(() => ToggleSelectedAddress(), isCoinListItemSelected);
 

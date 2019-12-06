@@ -140,7 +140,7 @@ namespace WalletWasabi.Gui.ViewModels
 
 		private CancellationTokenSource CancelClipboardNotification { get; set; }
 
-		public async Task TryCopyToClipboardAsync()
+		public async Task TryCopyToClipboardAsync(string propertyName)
 		{
 			try
 			{
@@ -153,7 +153,8 @@ namespace WalletWasabi.Gui.ViewModels
 
 				var cancelToken = CancelClipboardNotification.Token;
 
-				await Application.Current.Clipboard.SetTextAsync(Address);
+				var property = GetType().GetProperty(propertyName)?.GetValue(this, null) as string ?? Address;
+				await Application.Current.Clipboard.SetTextAsync(property);
 				cancelToken.ThrowIfCancellationRequested();
 
 				ClipboardNotificationVisible = true;
